@@ -1,13 +1,14 @@
 import dash
-import dash_core_components as dcc
 import dash_html_components as html
+import dash_core_components as core
 import dash_bootstrap_components as dbc
 import web_layout.navbar as navbar
 import web_layout.data_table as data_table
-from dash_react_table import DashReactTable
-import pandas as pd
 from dash.dependencies import Input, Output
-import repository as repo
+import web_layout.CardView as card
+import services.general_data as gt
+import web_layout.pieChart as pie
+import plotly.express as px
 
 # create dash
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -21,29 +22,56 @@ app.layout = html.Div(children=[
         dbc.Row(children=[
             html.Div([
                 data_table.get_table_of_data(),
-            ], className='col-9 '),
+            ], className='col-7'),
 
             dbc.Col([
-                dbc.Table(
-
-                )
+                dbc.Row([
+                    dbc.Col([
+                        card.card_with_title_and_number('number of people', gt.general_numbers()[0]),
+                    ], className='col-3'),
+                    dbc.Col([card.card_with_title_and_number('number of countries', gt.general_numbers()[1])],
+                            className='col-3'),
+                    dbc.Col([card.card_with_title_and_number('number of females', gt.general_numbers()[2])],
+                            className='col-3'),
+                    dbc.Col([card.card_with_title_and_number('number of males', gt.general_numbers()[3])],
+                            className='col-3'),
+                ])
             ])
-        ], className='col-9'),
+        ]),
 
         # active vs inactive worker
 
         dbc.Row(children=[
             html.Div(children=[
-                html.H4('Active vs Inactive workers'),
+                html.H4('General visualization about the data'),
+                pie.active_inactive_dropdown_list()
             ], className='col-6'),
 
             html.Div(children=[
                 html.H4('Female workers vs Male workers'),
             ], className='col-6'),
-        ], style={'text-align': 'center'}, className='mt-4')
+        ], className='mt-4')
 
     ], className='m-4')
 ])
+
+
+# for active and inactive piechart
+@app.callback(
+    Output(component_id='the_graph', component_property='figure'),
+    [Input(component_id='my_dropdown', component_property='value')]
+)
+def update_graph(my_dropdown):
+    dff = pie.df
+
+    piechart=px.pie(
+            data_frame=dff,
+            names=my_dropdown,
+            hole=.3,
+            )
+
+    return (piechart)
+
 
 
 # for data_table.get_table_of_data()
