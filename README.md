@@ -1,5 +1,16 @@
 # Python Plotly Test
 
+### Data
+1. [ ] relation between gender and work active
+2. [ ] relation between gender and country
+3. [ ] relation between gender and job title
+4. [ ] relation between
+5. [ ] relation between
+6. [ ] relation between
+7. [ ] relation between
+8. [ ] relation between
+9. [ ] relation between
+
 ### Task To do:
 1. [ ] Table of the data
     - [x] display sorted data
