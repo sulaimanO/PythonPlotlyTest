@@ -43,19 +43,16 @@ def get_countries():
 
     return [countries_len - 1, countries_list]
 
-
 def get_male_and_female():
     array = np.asarray(repo.csv_as_list())
     female = []
     male = []
-
     for record in array[1:]:
         gander = record[2]
         if gander == 'Female':
             female.append(record)
         else:
             male.append(record)
-
     female_len = len(set(map(tuple, female)))
     male_len = len(set(map(tuple, male)))
 

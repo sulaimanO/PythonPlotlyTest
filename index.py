@@ -8,6 +8,7 @@ from dash.dependencies import Input, Output
 import web_layout.CardView as card
 import services.general_data as gt
 import web_layout.pieChart as pie
+import web_layout.BarChart as bar_chart
 import plotly.express as px
 
 # create dash
@@ -44,16 +45,42 @@ app.layout = html.Div(children=[
         dbc.Row(children=[
             html.Div(children=[
                 html.H4('General visualization about the data'),
-                pie.active_inactive_dropdown_list()
+                pie.all_data_pie()
             ], className='col-6'),
 
             html.Div(children=[
-                html.H4('Female workers vs Male workers'),
-            ], className='col-6'),
-        ], className='mt-4')
 
-    ], className='m-4')
+            ], className='col-6'),
+        ], className='mt-4'),
+
+        dbc.Row([
+            html.Div([
+                html.H4('relation between job and state and gender'),
+                bar_chart.relation_between_job_and_state_and_gender()
+            ], className='col-12')
+        ])
+
+    ], className='m-2')
 ])
+
+
+# active state
+@app.callback(
+    Output(component_id='the_active_state_graph', component_property='figure'),
+    [Input(component_id='active_state_dropdown', component_property='value')]
+)
+def update_work_active_state(selected_value):
+    dff = pie.df
+
+    get_x_y_z = bar_chart.dropdwon_selected_job_state_gender(selected_value)
+
+    return px.bar(
+        data_frame=dff,
+        x=get_x_y_z[0],
+        y=get_x_y_z[1],
+        color=get_x_y_z[2],
+        barmode="group"
+    )
 
 
 # for active and inactive piechart
@@ -64,14 +91,13 @@ app.layout = html.Div(children=[
 def update_graph(my_dropdown):
     dff = pie.df
 
-    piechart=px.pie(
-            data_frame=dff,
-            names=my_dropdown,
-            hole=.3,
-            )
+    piechart = px.pie(
+        data_frame=dff,
+        names=my_dropdown,
+        hole=.3,
+    )
 
     return (piechart)
-
 
 
 # for data_table.get_table_of_data()

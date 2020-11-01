@@ -24,6 +24,16 @@
     - [x] show number of females in the data
     - [x] show number of male in the data
 
+5. [ ] relation between job and state and gender
+    - [ ] filter by job
+    - [ ] filter by state
+    - [ ] filter by gender
+    
+6. [ ] relation between country and state
+    - [ ] filter by country
+    - [ ] filter by state
+
+
 ---
 ### Resources
 - For mock data: https://www.mockaroo.com/

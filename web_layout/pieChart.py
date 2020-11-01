@@ -6,7 +6,7 @@ import dash_html_components as html
 
 df = gt.get_table_of_all_data()[0]
 
-def active_inactive_dropdown_list():
+def all_data_pie():
     return html.Div([
         html.Div([
             html.Label(['select from the list below']),
@@ -32,3 +32,4 @@ def active_inactive_dropdown_list():
         ]),
 
     ])
+
