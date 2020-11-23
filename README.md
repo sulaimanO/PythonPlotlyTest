@@ -1,5 +1,6 @@
 # Python Plotly Test
 <img src="https://upload.wikimedia.org/wikipedia/commons/3/37/Plotly-logo-01-square.png" />
+
 ### Featues
 1. [x] Comparing data in Bar chart
 2. [x] Table of data
