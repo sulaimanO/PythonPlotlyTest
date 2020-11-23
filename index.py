@@ -43,7 +43,17 @@ app.layout = html.Div(children=[
 
         dbc.Row(children=[
             html.Div(children=[
-                html.H4('Comparing data by'),
+                html.H4('Comparing data by Counties'),
+
+
+
+            ], className='col-12'),
+
+        ], className='mt-4'),
+
+        dbc.Row(children=[
+            html.Div(children=[
+                html.H4('Genera; Comparing data by'),
 
                 bar_chart.comparing_data_by_dropdown_list(
                     first_dropdown_list_id="type_of_data_dropdown_list",

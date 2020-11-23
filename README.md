@@ -39,7 +39,7 @@
 - Bootstrap: https://dash-bootstrap-components.opensource.faculty.ai/
 - for inspiration: https://dash-gallery.plotly.host/Portal/
 ---
-### some issues
+### Some issues
 1. few examples of full project
 2. hard to style
 3. most of the repos are archived by the owners
