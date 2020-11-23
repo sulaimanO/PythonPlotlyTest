@@ -43,6 +43,7 @@ def get_countries():
 
     return [countries_len - 1, countries_list]
 
+
 def get_male_and_female():
     array = np.asarray(repo.csv_as_list())
     female = []

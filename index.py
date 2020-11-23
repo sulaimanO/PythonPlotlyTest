@@ -1,15 +1,16 @@
 import dash
-import dash_html_components as html
-import dash_core_components as core
 import dash_bootstrap_components as dbc
-import web_layout.navbar as navbar
-import web_layout.data_table as data_table
-from dash.dependencies import Input, Output
-import web_layout.CardView as card
-import services.general_data as gt
-import web_layout.pieChart as pie
-import web_layout.BarChart as bar_chart
+import dash_html_components as html
 import plotly.express as px
+from dash.dependencies import Input, Output
+import services.general_data as gt
+import web_layout.BarChart as bar_chart
+import web_layout.CardView as card
+import web_layout.data_table as data_table
+import web_layout.navbar as navbar
+import web_layout.pieChart as pie
+import web_layout.options_dropdow_list as opt_dropdown
+import dash_core_components as dcc
 
 # create dash
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -19,71 +20,60 @@ app.layout = html.Div(children=[
     html.Br(),
 
     html.Div(children=[
-        # table of data
-        dbc.Row(children=[
-            html.Div([
-                data_table.get_table_of_data(),
-            ], className='col-7'),
+        html.Div([
+            dbc.Row([
+                card.card_with_title_and_number('number of people', gt.general_numbers()[0]),
+                card.card_with_title_and_number('number of countries', gt.general_numbers()[1]),
+                card.card_with_title_and_number('number of females', gt.general_numbers()[2]),
+                card.card_with_title_and_number('number of males', gt.general_numbers()[3]),
 
-            dbc.Col([
-                dbc.Row([
-                    dbc.Col([
-                        card.card_with_title_and_number('number of people', gt.general_numbers()[0]),
-                    ], className='col-3'),
-                    dbc.Col([card.card_with_title_and_number('number of countries', gt.general_numbers()[1])],
-                            className='col-3'),
-                    dbc.Col([card.card_with_title_and_number('number of females', gt.general_numbers()[2])],
-                            className='col-3'),
-                    dbc.Col([card.card_with_title_and_number('number of males', gt.general_numbers()[3])],
-                            className='col-3'),
-                ])
+                html.Div([
+                    data_table.get_table_of_data(),
+                ], className='col-6 ml-3'),
+
             ])
-        ]),
-
-        # active vs inactive worker
+        ], className="col-12"),
 
         dbc.Row(children=[
             html.Div(children=[
-                html.H4('General visualization about the data'),
-                pie.all_data_pie()
-            ], className='col-6'),
+                pie.all_data_pie(options=opt_dropdown.select_options(job_title=False, country=False),
+                                 label="Gender, Work Active, State")
+            ], className='col-6 card'),
+        ], className="ml-2"),
 
+        dbc.Row(children=[
             html.Div(children=[
+                html.H4('Comparing data by'),
 
-            ], className='col-6'),
+                bar_chart.comparing_data_by_dropdown_list(
+                    first_dropdown_list_id="type_of_data_dropdown_list",
+                    second_dropdown_list_id="type_of_data_dropdown_list2",
+                    graph_id="type_of_data_graph",
+                    options_list_1=opt_dropdown.select_options(),
+                    options_list_2=opt_dropdown.select_options(country=False, job_title=False),
+                    slider_id="slider_comparing"),
+
+
+            ], className='col-12'),
+
         ], className='mt-4'),
-
-        dbc.Row([
-            html.Div([
-                html.H4('relation between job and state and gender'),
-                bar_chart.relation_between_job_and_state_and_gender()
-            ], className='col-12')
-        ])
-
     ], className='m-2')
 ])
 
 
-# active state
+# Comparing data by
 @app.callback(
-    Output(component_id='the_active_state_graph', component_property='figure'),
-    [Input(component_id='active_state_dropdown', component_property='value')]
+    Output(component_id='type_of_data_graph', component_property='figure'),
+    [Input(component_id='type_of_data_dropdown_list', component_property='value'),
+     Input(component_id='type_of_data_dropdown_list2', component_property='value'),
+     Input(component_id='slider_comparing', component_property='value')]
 )
-def update_work_active_state(selected_value):
-    dff = pie.df
-
-    get_x_y_z = bar_chart.dropdwon_selected_job_state_gender(selected_value)
-
-    return px.bar(
-        data_frame=dff,
-        x=get_x_y_z[0],
-        y=get_x_y_z[1],
-        color=get_x_y_z[2],
-        barmode="group"
-    )
+def compare_data_by_bar_chart(type_of_data, type_of_data_2, slider_value):
+    print(slider_value)
+    return bar_chart.comparing_data_by_figure(type_of_data, type_of_data_2, slider_value)
 
 
-# for active and inactive piechart
+# General visualization about the data
 @app.callback(
     Output(component_id='the_graph', component_property='figure'),
     [Input(component_id='my_dropdown', component_property='value')]
@@ -91,13 +81,11 @@ def update_work_active_state(selected_value):
 def update_graph(my_dropdown):
     dff = pie.df
 
-    piechart = px.pie(
+    return px.pie(
         data_frame=dff,
         names=my_dropdown,
         hole=.3,
     )
-
-    return (piechart)
 
 
 # for data_table.get_table_of_data()

@@ -1,55 +1,108 @@
-#https://plotly.com/python/bar-charts/
+# https://plotly.com/python/bar-charts/
 import plotly.express as px
 import dash_core_components as dcc
 import dash_html_components as html
-import plotly.graph_objs as go
-import pandas as pd
+import dash_bootstrap_components as dbc
 import services.general_data as gt
-import numpy as np
+
+df = gt.get_table_of_all_data()[0]
 
 
-# does not show data right
-def relation_between_job_and_state_and_gender():
-    #df = gt.get_table_of_all_data()[0]
-   #print(gt.get_countries()[1])
-    #fig = px.bar(df, x="Country", y="State", color="State", barmode="group")
+# Comparing data by gender
+def comparing_data_by_dropdown_list(first_dropdown_list_id, graph_id, options_list_1, options_list_2,
+                                    slider_id=None, slider_range=None, second_dropdown_list_id=None):
+    col_length = "col-12"
+    if slider_id and second_dropdown_list_id:
+        col_length = "col-4"
+    elif slider_id or second_dropdown_list_id:
+        col_length = "col-6"
+
+    first_dropdown_list = html.Div([
+        html.Label(['select from the list below']),
+        dcc.Dropdown(
+            id=first_dropdown_list_id,
+            options=options_list_1,
+            value='State',
+            multi=False,
+            clearable=False,
+            style={"width": "100%"}
+        ),
+    ], className=col_length)
+
+    graph = html.Div([dcc.Graph(id=graph_id)])
+
+    slider_div = html.Div([])
+    total_records = gt.general_numbers()[0]
+
+    if slider_id is not None:
+        if slider_range is not None:
+            total_records = slider_range
+
+        slider_div = html.Div([
+            html.Label(['Number of records to compare']),
+            dcc.Slider(
+                id=slider_id,
+                min=1,
+                max=total_records,
+                step=0.5,
+                value=10,
+                marks={
+                    1: '1',
+                    total_records // 2: str(total_records // 2),
+                    total_records: str(total_records)
+                }
+            ),
+            html.Div(id='slider-output-container')
+        ], className="col-4 mt-auto")
+
+    if second_dropdown_list_id is not None:
+        second_dropdown_list = html.Div([
+            html.Label(['select from the list below']),
+            dcc.Dropdown(
+                id=second_dropdown_list_id,
+                options=options_list_2,
+                value='gender',
+                multi=False,
+                clearable=False,
+                style={"width": "100%"}
+            ),
+        ], className=col_length)
+
+        return html.Div([
+            dbc.Row([
+                first_dropdown_list,
+                second_dropdown_list,
+                slider_div
+            ]),
+            graph
+        ])
 
     return html.Div([
-        dcc.Dropdown(
-            id='active_state_dropdown',
-            options=[
-                {"label": 'Gender', "value": 'gender'},
-                {"label": 'Job Title', "value": 'JobTitle'},
-                {"label": 'Work Active', "value": 'WorkActive'},
-            ],
-            multi=True,
-            value="gender"
-        ),
-        html.Div([
-            dcc.Graph(id='the_active_state_graph')
-        ]),
+        first_dropdown_list,
+        slider_div,
+        graph
     ])
 
-# relation between job and state and gender
-def dropdwon_selected_job_state_gender(value):
-    x = None
-    y = None
-    color = None
 
-    # if user not select y and color
-    if isinstance(value, str):
-        print('here 1')
-        x = value
-        y = 'JobTitle'
-        color = 'WorkActive'
-    else:
-        print('here 2')
-        x = value[0]
-        y = value[1]
-        color = value[2]
+# TODO: Refactor this
+def comparing_data_by_figure(x, compare_by, number_of_data=None):
+    y_count = gt.general_numbers()[0]
 
-    return [x, y, color]
+    if number_of_data is not None:
+        dff = df.head(int(number_of_data))
+        print(dff)
+        return px.bar(
+            data_frame=dff,
+            x=x,
+            color=compare_by,
+            barmode='group',
+            range_y=[0, number_of_data],
+        )
 
-
-
-
+    return px.bar(
+        data_frame=df,
+        x=x,
+        color=compare_by,
+        barmode='group',
+        range_y=[0, y_count],
+    )

@@ -6,20 +6,13 @@ import dash_html_components as html
 
 df = gt.get_table_of_all_data()[0]
 
-def all_data_pie():
+def all_data_pie(options, label):
     return html.Div([
         html.Div([
-            html.Label(['select from the list below']),
+            html.Label([label]),
             dcc.Dropdown(
                 id='my_dropdown',
-                options=[
-                    {"label": 'Gender', "value": 'gender'},
-                    {"label": 'Country', "value": 'Country'},
-                    {"label": 'Job Title', "value": 'JobTitle'},
-                    {"label": 'State', "value": 'State'},
-                    {"label": 'Work Active', "value": 'WorkActive'},
-
-                ],
+                options=options,
                 value='gender',
                 multi=False,
                 clearable=False,
